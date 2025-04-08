@@ -1,8 +1,10 @@
+import json
 from langgraph.graph import StateGraph, END
 from nodes.ocr import estrai_testo_da_immagine
 from nodes.extract_template import extract_template
 from nodes.populate import populate_template
-from typing import TypedDict
+from nodes.evaluator import valuta_output_template
+from typing import TypedDict, Any
 
 
 # Stato globale del grafo
@@ -10,6 +12,8 @@ class WorkflowState(TypedDict, total=False):
     testo_ocr: str
     campi_template: str
     template_popolato: str
+    valutazione: Any
+    parametri_valutazione: list
 
 # Nodo 1: OCR
 def ocr_node(state: WorkflowState) -> WorkflowState:
@@ -35,21 +39,42 @@ def populate_template_node(state: WorkflowState) -> WorkflowState:
     populated_template = populate_template(campi_template)
     return {"template_popolato": populated_template}
 
+# Nodo 4: Valutazione
+def evaluation_node(state: WorkflowState) -> WorkflowState:
+    print("Valuto il risultato...")
+    testo_ocr = state.get("testo_ocr", "")
+    template = state.get("template_popolato", "")
+    parametri = state.get("parametri_valutazione", [])
+    valutazione = valuta_output_template(testo_ocr, template, parametri)
+    return {"valutazione": valutazione}
+
+
 # Costruzione del grafo
 workflow = StateGraph(WorkflowState)
 workflow.add_node("ocr", ocr_node)
 workflow.add_node("estrai_template", template_extractor_node)
-workflow.add_node("popola_template", populate_template_node) 
+workflow.add_node("popola_template", populate_template_node)
+workflow.add_node("valuta_output", evaluation_node)
 
 workflow.set_entry_point("ocr")
 workflow.add_edge("ocr", "estrai_template")
-workflow.add_edge("estrai_template", "popola_template") 
-workflow.add_edge("popola_template", END)
+workflow.add_edge("estrai_template", "popola_template")
+workflow.add_edge("popola_template", "valuta_output")
+workflow.add_edge("valuta_output", END)
 
 app = workflow.compile()
 
 # Esecuzione
 if __name__ == "__main__":
     print("🚀 Avvio grafo...")
-    result = app.invoke({})
+
+    # Caricamento parametri da file JSON
+    with open("parametri_valutazione.json", "r", encoding="utf-8") as f:
+        parametri = json.load(f)
+
+    result = app.invoke({
+        "parametri_valutazione": parametri
+    })
+
     print("\nTemplate popolato:\n", result["template_popolato"])
+    print("\nValutazione:\n", result["valutazione"])

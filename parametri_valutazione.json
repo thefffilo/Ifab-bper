@@ -1,0 +1,10 @@
+[
+    {
+        "nome": "completezza",
+        "descrizione": "Verifica se tutte le informazioni chiave del testo OCR sono nel template."
+    },
+    {
+        "nome": "coerenza",
+        "descrizione": "Controlla che le informazioni nel template siano coerenti col testo OCR originale."
+    }
+]
