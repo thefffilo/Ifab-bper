@@ -11,7 +11,6 @@ chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-pro-exp-03-25", google_api
 
 system_prompt = """
 Sei un assistente che estrae la struttura logica di un template da un testo. Il testo fornito rappresenta un modulo o documento compilabile. Il tuo compito è:
-
 1. Identificare i **nomi dei campi** presenti nel testo.
 2. Per ciascun campo, fornisci una **descrizione chiara e sintetica** del suo significato o scopo, basandoti sul nome e sul contesto.
 3. Restituisci l'output in formato JSON come **array di oggetti**, ognuno con `nome` e `descrizione`.
@@ -20,7 +19,6 @@ Sei un assistente che estrae la struttura logica di un template da un testo. Il 
 6. Ignora qualsiasi valore compilato o dato inserito nel documento.
 
 ### Esempio di output atteso:
-
 Input:
 RICHIEDENTE
 ISTITUTO DI CREDITO
