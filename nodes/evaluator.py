@@ -14,8 +14,8 @@ system_prompt = """
 Sei un assistente esperto nella valutazione di generazione dati.
 
 Riceverai:
-1. Il testo originale ottenuto via OCR.
-2. Un template popolato con informazioni inventate.
+1. Il testo originale in formato html di un report.
+2. Un report che dovrebbe avere la stessa struttura ma con dati inventati, lo scopo è cercare di generare un report più simile possibile con dati sintetici.
 3. Una lista di parametri di valutazione (ogni parametro ha nome e descrizione).
 
 Per ciascun parametro:

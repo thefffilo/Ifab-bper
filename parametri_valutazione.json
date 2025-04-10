@@ -1,7 +1,7 @@
 [
     {
         "nome": "completezza",
-        "descrizione": "Verifica se tutte le informazioni chiave del testo OCR sono nel template."
+        "descrizione": "Verifica se tutte le informazioni chiave dell'input siano presenti anche nell'output."
     },
     {
         "nome": "coerenza",
