@@ -10,7 +10,7 @@ from typing import TypedDict, Any
 
 # Stato globale del grafo
 class WorkflowState(TypedDict, total=False):
-    testo_ocr: str
+    documento_html: str
     campi_template: str
     template_popolato: str
     report_finale: str
@@ -20,16 +20,16 @@ class WorkflowState(TypedDict, total=False):
 # Nodo 1: OCR
 def ocr_node(state: WorkflowState) -> WorkflowState:
     print("Eseguo OCR...")
-    testo = estrai_testo_da_immagine("image.png")
-    return {"testo_ocr": testo}
+    html = estrai_testo_da_immagine("image.png")
+    return {"documento_html": html} 
 
 # Nodo 2: Estrazione Template
 def template_extractor_node(state: WorkflowState) -> WorkflowState:
     print("Estraggo campi dal testo OCR...")
-    testo = state.get("testo_ocr", "")
-    if not testo:
-        raise ValueError("Nessun testo OCR disponibile.")
-    output = extract_template(testo)
+    documento_html = state.get("documento_html", "")
+    if not documento_html:
+        raise ValueError("Nessun documento_html OCR disponibile.")
+    output = extract_template(documento_html)
     return {"campi_template": output}
 
 # Nodo 3: Popolamento Template
@@ -44,19 +44,20 @@ def populate_template_node(state: WorkflowState) -> WorkflowState:
 # Nodo 4: Genera report finale
 def generate_report_node(state: WorkflowState) -> WorkflowState:
     print("Genero il report...")
+    documento_html = state.get("documento_html", "")
     template_popolato = state.get("template_popolato", "")
     if not template_popolato:
         raise ValueError("Nessun contenuto disponibile.")
-    report_finale = create_report(template_popolato)
+    report_finale = create_report(template_popolato, documento_html)
     return {"report_finale": report_finale}
 
 # Nodo 5: Valutazione
 def evaluation_node(state: WorkflowState) -> WorkflowState:
     print("Valuto il risultato...")
-    testo_ocr = state.get("testo_ocr", "")
+    documento_html = state.get("documento_html", "")
     template = state.get("report_finale", "")
     parametri = state.get("parametri_valutazione", [])
-    valutazione = valuta_output_template(testo_ocr, template, parametri)
+    valutazione = valuta_output_template(documento_html, template, parametri)
     return {"valutazione": valutazione}
 
 
@@ -89,5 +90,5 @@ if __name__ == "__main__":
         "parametri_valutazione": parametri
     })
 
-    print("\nReport finale:\n", result["report_finale"])
+    # print("\nReport finale:\n", result["report_finale"])
     print("\nValutazione:\n", result["valutazione"])

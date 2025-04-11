@@ -14,14 +14,18 @@ system_prompt = """
 Sei un assistente intelligente incaricato di creare un report dato un esempio e il contenuto.
 
 Riceverai in input il codice html di un report e il testo di un nuovo report. 
-Devi sostituire le informazioni con il nuovo contenuto senza modificare la struttura del codice html.
+Devi sostituire le informazioni nel codice html con il nuovo contenuto senza modificare la struttura del codice.
 
-Fornisci in output solo il codice html del report, non aggiungere nessun'altra stringa.
+Fornisci in output solo il codice html del nuovo report, non aggiungere nessun'altra stringa.
+
+CODICE HTML:
+{html}
 """
 
-def create_report(query):
+def create_report(query, html_code):
+    sys_prompt = system_prompt.format(html=html_code)
     messages = [
-        SystemMessage(content=system_prompt),
+        SystemMessage(content=sys_prompt),
         HumanMessage(content=query)
     ]
     response = chat_model(messages)
